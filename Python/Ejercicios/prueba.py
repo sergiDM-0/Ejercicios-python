@@ -15,14 +15,3 @@ nombres_de_perros = ["toby","tony","romeo","dog","dr"]
 
 analizar_nombres(nombres_de_perros)
 
-
-def sumar(a, b):
-  """Esta función suma dos números y devuelve el resultado."""
-  resultado = a + b
-  return resultado
-
-
-s = sumar(5, 3)
-print(s)
-print(f"El resultado de la suma es: {s}\n")
-                                                                    
