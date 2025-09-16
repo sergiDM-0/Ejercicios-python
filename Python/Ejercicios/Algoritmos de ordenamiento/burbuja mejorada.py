@@ -3,9 +3,8 @@ import random
 import time
 import matplotlib.pyplot as plt
 
-
+#metodo de ordenamiento burbuja mejorado
 def burbuja_mejorado(lista):
-    """Método de ordenamiento burbuja mejorado."""
     i = 0
     control = True
 
@@ -19,26 +18,36 @@ def burbuja_mejorado(lista):
     return lista
 
 
+#tamaño de la lista
 array = []
-size = [1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000
-,16000,17000,18000,19000,20000,21000,22000,23000,24000,25000,26000,27000,28000,29000,30000]
+size = [100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500
+,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,2600,2700,2800,2900,3000]
 execution_times = []
 
+#generar lista aleatoria
 for i in size:
   array = [random.randint(0,1000000) for _ in range(i)]
 
-  start_time = time.time()
   print("")
   print("lista desordenada:",array,"\n")
-  print(f"lista ordenada: {burbuja_mejorado(array)}")
-  end_time = time.time()
+
+  #iniciar tiempo de ejecucion
+  start_time = time.perf_counter()
+  Lista_ordenada_burbuja_mejorado = burbuja_mejorado(array)
+  end_time = time.perf_counter()
+  #fin tiempo de ejecucion
+
+  #imprimir lista ordenada
+  print(f"lista ordenada: {Lista_ordenada_burbuja_mejorado}")
   execution_times.append(end_time - start_time)
 
+#imprimir resultados
 print("--------------------------------\n")
-print("start time", start_time)
-print("end time", end_time)
-print(f"Tiempos de ejecución:{execution_times[0]}")
-
+print("start time", start_time ,"segundos")
+print("end time", end_time ,"segundos")
+print(f"Tiempos de ejecución:{execution_times} segundos")
+print(f"Tiempo final: {end_time - start_time} segundos")
+print(f"Tiempo total sumado: {sum(execution_times)} segundos")
 
 # Crear la gráfica
 plt.figure(figsize=(12, 8))

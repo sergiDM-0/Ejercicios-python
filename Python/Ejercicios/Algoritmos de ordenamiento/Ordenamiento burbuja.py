@@ -13,7 +13,8 @@ def burbuja(lista):
 
 #tamaño de la lista
 array = []
-size = [100,200,300,400,500,600,700,800,900,1000]
+size = [100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500
+,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,2600,2700,2800,2900,3000]
 execution_times = []
 
 #generar lista aleatoria
@@ -26,19 +27,20 @@ for i in size:
 
   #iniciar tiempo de ejecucion
   start_time = time.perf_counter()
-  burbuja(array)
+  lista_ordenado_burbuja = burbuja(array)
   end_time = time.perf_counter()
   #fin tiempo de ejecucion
 
-  print(f"lista ordenada: {burbuja(array)}")
+  print(f"lista ordenada: {lista_ordenado_burbuja}")
   execution_times.append(end_time - start_time)
 
 #imprimir resultados
 print("--------------------------------\n")
-print("start time", start_time)
-print("end time", end_time)
-print(f"Tiempos de ejecución:{execution_times}")
-print(f"Tiempo final (última iteración): {end_time - start_time}")
+print("start time", start_time ,"segundos")
+print("end time", end_time ,"segundos")
+print(f"Tiempos de ejecución:{execution_times} segundos")
+print(f"Tiempo final: {end_time - start_time} segundos")
+print(f"Tiempo total sumado: {sum(execution_times)} segundos")
 
 # Crear la gráfica
 plt.figure(figsize=(12, 8))
