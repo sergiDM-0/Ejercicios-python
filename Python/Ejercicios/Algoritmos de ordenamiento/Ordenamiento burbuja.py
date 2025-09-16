@@ -2,8 +2,8 @@ import time
 import random
 import matplotlib.pyplot as plt
 
+#metodo de ordenamiento burbuja
 def burbuja(lista):
-#""metodo de ordenamiento burbuja""
   for i in range (0,len(lista)-1):
     for j in range (0,len(lista)-i-1):
       if(lista[j]>lista[j+1]):
@@ -11,26 +11,34 @@ def burbuja(lista):
 
   return lista
 
+#tamaño de la lista
 array = []
-size = [1000,2000,3000,4000,5000,6000,7000,8000,9000,10000,11000,12000,13000,14000,15000
-,16000,17000,18000,19000,20000,21000,22000,23000,24000,25000,26000,27000,28000,29000,30000]
+size = [100,200,300,400,500,600,700,800,900,1000]
 execution_times = []
 
+#generar lista aleatoria
 for i in size:
   array = [random.randint(0,1000000) for _ in range(i)]
 
-  start_time = time.time()
+
   print("")
   print("lista desordenada:",array,"\n")
+
+  #iniciar tiempo de ejecucion
+  start_time = time.perf_counter()
+  burbuja(array)
+  end_time = time.perf_counter()
+  #fin tiempo de ejecucion
+
   print(f"lista ordenada: {burbuja(array)}")
-  end_time = time.time()
   execution_times.append(end_time - start_time)
 
+#imprimir resultados
 print("--------------------------------\n")
 print("start time", start_time)
 print("end time", end_time)
-print(f"Tiempos de ejecución:{execution_times[0]}")
-
+print(f"Tiempos de ejecución:{execution_times}")
+print(f"Tiempo final (última iteración): {end_time - start_time}")
 
 # Crear la gráfica
 plt.figure(figsize=(12, 8))
