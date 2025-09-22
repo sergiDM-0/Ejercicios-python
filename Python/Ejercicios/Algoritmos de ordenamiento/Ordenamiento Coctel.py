@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-Algoritmo de Ordenamiento por Selección
-=======================================
+Algoritmo de Ordenamiento Coctel (Cocktail Shaker Sort)
+======================================================
 
-Este algoritmo busca el elemento más pequeño de toda la lista y lo pone en la 
-primera posición. Luego, busca el segundo más pequeño y lo pone en la segunda 
-posición, y así sucesivamente.
+Es una variante del burbuja. En lugar de ir siempre en una dirección, va de 
+izquierda a derecha (llevando el más grande al final) y luego de derecha a 
+izquierda (llevando el más pequeño al inicio). Es como sacudir una coctelera. 🍸
 
 Complejidad: O(n²)
 Categoría: Básico
@@ -15,9 +15,9 @@ import time
 import random
 import matplotlib.pyplot as plt
 
-def seleccion(lista):
+def coctel(lista):
     """
-    Método de ordenamiento selección.
+    Método de ordenamiento cóctel o burbuja bidireccional.
     
     Args:
         lista: Lista de números a ordenar
@@ -25,17 +25,32 @@ def seleccion(lista):
     Returns:
         Lista ordenada
     """
-    for i in range(0, len(lista)-1):
-        minimo = i
-        for j in range(i+1, len(lista)):
-            if lista[j] < lista[minimo]:
-                minimo = j
-        lista[i], lista[minimo] = lista[minimo], lista[i]
+    izquierda = 0
+    derecha = len(lista) - 1
+    control = True
+    
+    while (izquierda < derecha) and control:
+        control = False
+        
+        # Pasar de izquierda a derecha
+        for i in range(izquierda, derecha):
+            if lista[i] > lista[i+1]:
+                control = True
+                lista[i], lista[i+1] = lista[i+1], lista[i]
+        derecha -= 1
+        
+        # Pasar de derecha a izquierda
+        for j in range(derecha, izquierda, -1):
+            if lista[j] < lista[j-1]:
+                control = True
+                lista[j], lista[j-1] = lista[j-1], lista[j]
+        izquierda += 1
+    
     return lista
 
-def ejecutar_pruebas_seleccion():
+def ejecutar_pruebas_coctel():
     """
-    Ejecuta las pruebas de rendimiento del algoritmo selección.
+    Ejecuta las pruebas de rendimiento del algoritmo coctel.
     """
     # Tamaños de lista para probar
     size = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100, 1200, 1300, 1400, 1500,
@@ -44,7 +59,7 @@ def ejecutar_pruebas_seleccion():
     
     execution_times = []
     
-    print("🔄 Ejecutando pruebas de rendimiento - Algoritmo Selección")
+    print("🔄 Ejecutando pruebas de rendimiento - Algoritmo Coctel")
     print("=" * 60)
     
     # Generar listas aleatorias y medir tiempos
@@ -54,7 +69,7 @@ def ejecutar_pruebas_seleccion():
         
         # Medir tiempo de ejecución
         start_time = time.perf_counter()
-        lista_ordenada = seleccion(array)
+        lista_ordenada = coctel(array)
         end_time = time.perf_counter()
         
         tiempo_transcurrido = end_time - start_time
@@ -71,10 +86,10 @@ def ejecutar_pruebas_seleccion():
     
     # Crear gráfica
     plt.figure(figsize=(12, 8))
-    plt.plot(size, execution_times, 'co-', linewidth=2, markersize=8)
+    plt.plot(size, execution_times, 'mo-', linewidth=2, markersize=8)
     plt.xlabel('Tamaño de la lista')
     plt.ylabel('Tiempo de ejecución (segundos)')
-    plt.title('Rendimiento del Algoritmo de Ordenamiento Selección')
+    plt.title('Rendimiento del Algoritmo de Ordenamiento Coctel')
     plt.grid(True, alpha=0.3)
     plt.xticks(size, rotation=45)
     plt.tight_layout()
@@ -84,7 +99,7 @@ def ejecutar_pruebas_seleccion():
 
 if __name__ == "__main__":
     # Ejecutar pruebas
-    tiempos, tamanos = ejecutar_pruebas_seleccion()
+    tiempos, tamanos = ejecutar_pruebas_coctel()
     
     # Mostrar estadísticas finales
     print(f"\n🏆 ESTADÍSTICAS FINALES:")

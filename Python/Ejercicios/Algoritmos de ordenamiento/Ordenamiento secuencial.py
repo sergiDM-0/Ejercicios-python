@@ -16,34 +16,46 @@ def secuencial(lista, buscado):
 #tamaño de la lista
 array = []
 size = [100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500
-,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,2600,2700,2800,2900,3000]
+,1600,1700,1800,1900,2000,2100,2200,2300,2400,2500,2600,2700,2800,2900,3000,
+3100,3200,3300,3400,3500,3600,3700,3800,3900,4000]
 execution_times = []
 
 #generar lista aleatoria
 for i in size:
   array = [random.randint(0,100) for _ in range(i)]
 
-
-  print("")
-  print("lista desordenada:",array,"\n")
+  # Crear una copia de la lista original para preservar el estado desordenado
+  array_desordenada = array.copy()
 
   #iniciar tiempo de ejecucion
   start_time = time.perf_counter()
-  Lista_ordenada_secuencial = secuencial(array,20)
+  Lista_ordenada_secuencial = secuencial(array)
   end_time = time.perf_counter()
-  #fin tiempo de ejecucion
 
+  #fin tiempo de ejecucion
+  print(f"tiempo inicial : {start_time}")
+  print(f"tiempo final: {end_time}")
+  #imprimir lista desordenada
+  print("lista desordenada:",array_desordenada,"")
   #imprimir lista ordenada
   print(f"lista ordenada: {Lista_ordenada_secuencial}")
-  execution_times.append(end_time - start_time)
+  #imprimit los tiempos finales de cada una de las listas 
+  tiempo_transcurrido = end_time - start_time
+  execution_times.append(tiempo_transcurrido)
+  print(f"Tiempo para la lista de tamaño {i}: {tiempo_transcurrido} segundos")
+  print("\n")
+  
+  
 
-#imprimir resultados
-print("--------------------------------\n")
-print("start time", start_time ,"segundos")
-print("end time", end_time ,"segundos")
-print(f"Tiempos de ejecución:{execution_times} segundos")
-print(f"Tiempo final: {end_time - start_time} segundos")
-print(f"Tiempo total sumado: {sum(execution_times)} segundos")
+
+#Imprimimos el resumen completos de resultados 
+print("-------------------------------------------")
+print("/    Resumen de Tiempos de Ejecución       /")
+print("-------------------------------------------")
+for tam, tiempo in zip(size, execution_times):
+    print(f"Tamaño: {tam}  ->  Tiempo: {tiempo} segundos")
+print("------------------ -------------------------\n")
+
 
 # Crear la gráfica
 plt.figure(figsize=(12, 8))
