@@ -97,62 +97,66 @@ while (not cvocales.cola_vacia()):
 cdatos = cola()
 cvocales = cola()
 
-#agrar los datos de la cola primero al final de la cola 
-
-letra = input("Ingrese un caracter (Enter para salir): ")
+letra = input("ingrese un caracter (enter para salir) :  ")
 while (letra != ''):
   cdatos.arribo(letra)
-  letra = input("Ingrese un caracter (Enter para salir): ")
+  letra = input("ingrese un caracter (enter para salir) : ")
 
-print("\n---------------------------------------\n")
+#imprime una copia de la cola inicial
+print("cola  inicial es: ")
+cdatos.barrido1()
 
-#mostar el tamaño de la cola inicial 
-print(f"La cola de datos tiene {cdatos.obtener_tamanio()} elementos.")
+print("______"*20)
 
-#primer dato que saldra de la cola 
-print(f"El elemento que está en el frente es: {cdatos.en_frente()}")
+#haciend uso del metodo mover_al_final 
+moveralfinal = input("ingrese (y) or (n) para move el primer dato en la cola al final:   " )
+if moveralfinal == "y":
+  cdatos.mover_al_final()
+  print("la cola con modificaciones es: ")
+  cdatos.barrido2()
+  print("")
+else:
+  print("la cola sin modificaciones es: ")
+  cdatos.barrido2()
+  print("")
+print("______"*20)
 
-print("\n---------------------------------------\n")
+#print(f"el primer dato en salir de la cola sera: ({cdatos.en_frente()}) {cdatos.frente}\n")
+#print(f"el puntero final de la cola es: {cdatos.final}\n")
+  
+print(f"el tamaño total inicial de la cola es {cdatos.obtener_tamanio()}")
+print(f"Cola vacia?: {cdatos.cola_vacia()}\n")
 
-#imprimir la cola inicial 
-print(" Mostrando contenido con el método de barrido eficiente:")
-cdatos.barrido2()
-print(f"Tamaño de la cola inicial: {cdatos.obtener_tamanio()}.")
+while (not cdatos.cola_vacia()):
 
-print("\n---------------------------------------\n")
-
-#cambiar el primer dato de la cola al final de la cola 
-print("Moviendo el elemento del frente al final...")
-elemento_movido = cdatos.mover_al_final()
-print(f"Se movió el elemento {elemento_movido} al final de la cola.")
-#nuevo siguiente en salir de la cola
-print(f"Ahora, el nuevo elemento en el frente es: {cdatos.en_frente()}\n")
-print(f"la cola de datos ahora es ")
-cdatos.barrido2()
-print("\n---------------------------------------\n")
+  #Guardamos una referencia al nodo que está en la frente.
+  nodo_frente = cdatos.frente
 
 
-print("Separando las vocales de la cola principal...")
-while not cdatos.cola_vacia():
-  # Se saca un elemento con atencion()
+  print(f"el primer dato en la cola es: {cdatos.en_frente()}")
+  print(f"el apuntador primer dato en la cola es: {cdatos.frente.apuntador}")
+
+  #print(f"el dato atendido es: {cdatos.frente.info}")
+  #print(f"el puntero del dato atendido es: {nodo_anterior.apuntador}\n")
+  
+  
+  #Atendemes un dato para que cambie el primer dato en -1
   letra = cdatos.atencion()
+  print(f"el dato atendido es ({nodo_frente.info}) con apuntador : {nodo_frente.apuntador}")
+
+  
+
+  #si es none es el fondo de la cola
+  if nodo_frente.apuntador is None:
+    print("Era el fondo de la cola\n")
+
   if letra.upper() in ["A",'E','I','O','U']:
-    #agrega la vocal a la cola de vocales 
     cvocales.arribo(letra)
 
-print(f"La cola de vocales ahora tiene {cvocales.obtener_tamanio()} elementos.")
+print("Datos cola Vocales")
+while (not cvocales.cola_vacia()):
+  dato = cvocales.atencion()
+  print(dato,"\n")
 
-print("\n---------------------------------------\n")
-
-#mostrar la cola de vocales
-print("Mostrando el contenido de la cola de vocales: ")
-cvocales.barrido1()
-
-print("\n---------------------------------------\n")
-
-
-#empty stacks
-print("stack final es: ")
-print(f"el tamaño de la cola de vocales es: {cvocales.obtener_tamanio()}")
-
-
+print(f"el tamaño total de la cola es: {cvocales.obtener_tamanio()}")
+print(f"el tamaño total de la cola de vocales es: {cvocales.obtener_tamanio()}")

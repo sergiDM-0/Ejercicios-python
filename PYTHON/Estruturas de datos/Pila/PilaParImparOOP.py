@@ -7,6 +7,8 @@ class nodoPila(object):
 class Pila(object):
     """Clase Pila."""
 
+#pdatos.apilar(10)
+
     def __init__(self):
         """Crea una pila vacía."""
         self.cima = None
@@ -81,7 +83,6 @@ pdatos.barrido()
 while (not pdatos.pila_vacia()):
     
     #Guardamos una referencia al nodo que está en la cima.
-    #Ahora tenemos acceso a toda su información.
     nodo_anterior = pdatos.cima
 
 
@@ -90,7 +91,7 @@ while (not pdatos.pila_vacia()):
     dato = pdatos.desapilar()
 
     #para comprobar la cima
-    print(f"la cima es {dato} : {pdatos.cima}")
+    print(f"la cima es {pdatos.en_cima()} : {pdatos.cima}")
 
     
     #nodo_anterior.apuntador' es el puntero al siguiente nodo en la lista.
@@ -121,7 +122,6 @@ while (not pimpar.pila_vacia()):
 
 
 #empty stacks
-
 print("stack final es: ")
 print(f"el tamaño de la pila de pares es: {ppar.tamanio()}")
 print(f"el tamaño de la pila de impares es: {pimpar.tamanio()}")
