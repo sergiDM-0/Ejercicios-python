@@ -53,11 +53,9 @@ class lista(object):
                 self.tamanio -= 1
         return dato
 
-
     def tamanio(self):
         """Devuelve el numero de elementos en la lista."""
         return self.tamanio
-
 
     def buscar(self, buscado):
         """Devuelve la direccion del elemento buscado."""
@@ -66,7 +64,6 @@ class lista(object):
             aux = aux.puntero
         return aux
 
-
     def barrido(self):
         """Realiza un barrido de la lista mostrando sus valores."""
         aux = self.inicio
@@ -74,7 +71,7 @@ class lista(object):
             print(aux.info)
             aux = aux.puntero
 
-    
+"""    
 lista = lista()
 dato = input("ingrese una palabra: ")
 
@@ -92,3 +89,76 @@ else:
     print("no se encontro el elemento a eliminar ")
 
 lista.barrido()
+"""
+
+
+# ========================================================================================
+# EXTENSIÓN: Lista con múltiples elementos mostrando punteros
+# ========================================================================================
+
+# Crear lista
+mi_lista = lista()
+
+# Insertar primer dato
+dato = input("ingrese una palabra: ")
+mi_lista.insertar(dato)
+
+# Insertar segundo dato
+dato = input("ingrese una palabra: ")
+mi_lista.insertar(dato)
+
+# Insertar tercer dato
+dato = input("ingrese una palabra: ")
+mi_lista.insertar(dato)
+
+# Insertar cuarto dato
+dato = input("ingrese una palabra: ")
+mi_lista.insertar(dato)
+
+# Mostrar punteros de la lista
+print('\n--- PUNTEROS DE LA LISTA ---')
+print(f'mi_lista.inicio: {mi_lista.inicio}')
+print(f'mi_lista.tamanio: {mi_lista.tamanio}')
+
+# Mostrar punteros de cada nodo
+aux = mi_lista.inicio
+while(aux is not None):
+    print(f'\nNodo: {aux}')
+    print(f'  info: {aux.info}')
+    print(f'  puntero: {aux.puntero}')
+    aux = aux.puntero
+
+# Verificar si la lista está vacía
+print(f'\n¿Lista vacia? {mi_lista.lista_vacia()}')
+
+# Buscar un elemento
+buscado = input("\ningrese la palabra a buscar: ")
+posicion = mi_lista.buscar(buscado)
+
+if (posicion is not None):
+    print(f'\nElemento encontrado:')
+    print(f'  Nodo: {posicion}')
+    print(f'  info: {posicion.info}')
+    print(f'  puntero: {posicion.puntero}')
+    
+    # Eliminar el elemento encontrado
+    dato = mi_lista.eliminar(posicion.info)
+    print(f'\nelemento eliminado: {dato}')
+else:
+    print("\nno se encontro el elemento a eliminar")
+
+# Mostrar lista actualizada con punteros
+print('\n--- PUNTEROS DESPUÉS DE ELIMINAR ---')
+print(f'mi_lista.inicio: {mi_lista.inicio}')
+print(f'mi_lista.tamanio: {mi_lista.tamanio}')
+
+aux = mi_lista.inicio
+while(aux is not None):
+    print(f'\nNodo: {aux}')
+    print(f'  info: {aux.info}')
+    print(f'  puntero: {aux.puntero}')
+    aux = aux.puntero
+
+# Barrido final de la lista
+print('\n--- BARRIDO FINAL ---')
+mi_lista.barrido()
