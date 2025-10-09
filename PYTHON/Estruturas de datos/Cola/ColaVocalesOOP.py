@@ -130,24 +130,21 @@ print(f"Cola vacia?: {cdatos.cola_vacia()}\n")
 while (not cdatos.cola_vacia()):
 
   #Guardamos una referencia al nodo que está en la frente.
-  nodo_frente = cdatos.frente
+  nodo_en_frente = cdatos.frente
 
-
+  #comprobar el primer dato en la cola y el apuntador
   print(f"el primer dato en la cola es: {cdatos.en_frente()}")
   print(f"el apuntador primer dato en la cola es: {cdatos.frente.apuntador}")
 
-  #print(f"el dato atendido es: {cdatos.frente.info}")
-  #print(f"el puntero del dato atendido es: {nodo_anterior.apuntador}\n")
-  
   
   #Atendemes un dato para que cambie el primer dato en -1
   letra = cdatos.atencion()
-  print(f"el dato atendido es ({nodo_frente.info}) con apuntador : {nodo_frente.apuntador}")
+  print(f"el dato atendido es ({nodo_en_frente.info}) con apuntador : {nodo_en_frente.apuntador}")
 
   
 
   #si es none es el fondo de la cola
-  if nodo_frente.apuntador is None:
+  if nodo_en_frente.apuntador is None:
     print("Era el fondo de la cola\n")
 
   if letra.upper() in ["A",'E','I','O','U']:
