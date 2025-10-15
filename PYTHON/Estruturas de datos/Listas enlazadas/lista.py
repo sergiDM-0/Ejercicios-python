@@ -14,10 +14,10 @@ class lista(object):
 
     def insertar(self, dato):
         "inserta un dato pasad en la lista"
-        nodo = nodoLista()  
+        nodo = nodoLista()
         nodo.info = dato
-        if (self.inicio is None) or (self.inicio.info > dato): 
-            nodo.puntero = self.inicio 
+        if (self.inicio is None) or (self.inicio.info > dato):
+            nodo.puntero = self.inicio
             self.inicio = nodo
         else:
             ant = self.inicio
@@ -71,49 +71,18 @@ class lista(object):
             print(aux.info)
             aux = aux.puntero
 
-"""    
-lista = lista()
-dato = input("ingrese una palabra: ")
 
-while dato != "":
-    lista.insertar(dato)
-    dato = input("ingrese una palabra: ")
-
-buscado = input("ingresse la palabra a buscar: ")
-posicion = lista.buscar(buscado)
-
-if (posicion is not None):
-    dato = lista.eliminar(posicion.info)
-    print(f"elemento eliminado: {dato}")
-else:
-    print("no se encontro el elemento a eliminar ")
-
-lista.barrido()
-"""
-
-
-# ========================================================================================
-# EXTENSIÓN: Lista con múltiples elementos mostrando punteros
-# ========================================================================================
+#ejemplo lista 
 
 # Crear lista
 mi_lista = lista()
 
 # Insertar primer dato
 dato = input("ingrese una palabra: ")
-mi_lista.insertar(dato)
 
-# Insertar segundo dato
-dato = input("ingrese una palabra: ")
-mi_lista.insertar(dato)
-
-# Insertar tercer dato
-dato = input("ingrese una palabra: ")
-mi_lista.insertar(dato)
-
-# Insertar cuarto dato
-dato = input("ingrese una palabra: ")
-mi_lista.insertar(dato)
+while(dato != ''):
+    mi_lista.insertar(dato)
+    dato = input("ingrese una palabra: ")
 
 # Mostrar punteros de la lista
 print('\n--- PUNTEROS DE LA LISTA ---')
@@ -140,7 +109,7 @@ if (posicion is not None):
     print(f'  Nodo: {posicion}')
     print(f'  info: {posicion.info}')
     print(f'  puntero: {posicion.puntero}')
-    
+
     # Eliminar el elemento encontrado
     dato = mi_lista.eliminar(posicion.info)
     print(f'\nelemento eliminado: {dato}')
