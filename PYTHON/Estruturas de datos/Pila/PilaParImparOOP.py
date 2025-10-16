@@ -84,17 +84,13 @@ while (not pdatos.pila_vacia()):
     
     #Guardamos una referencia al nodo que está en la cima.
     nodo_anterior = pdatos.cima
-    
+
     #para comprobar la cima
     print(f"la cima es {pdatos.en_cima()} : {pdatos.cima}")
 
     #Desapilamos el valor. Esto actualiza pdatos.cima para que apunte
     #al siguiente nodo.
     dato = pdatos.desapilar()
-
-    #para comprobar la cima
-    print(f"la cima es {pdatos.en_cima()} : {pdatos.cima}")
-
     
     #nodo_anterior.apuntador' es el puntero al siguiente nodo en la lista.
     print(f"Se desapiló el valor: {dato}\n")

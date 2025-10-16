@@ -121,9 +121,7 @@ else:
   print("")
 print("______"*20)
 
-#print(f"el primer dato en salir de la cola sera: ({cdatos.en_frente()}) {cdatos.frente}\n")
-#print(f"el puntero final de la cola es: {cdatos.final}\n")
-  
+
 print(f"el tamaño total inicial de la cola es {cdatos.obtener_tamanio()}")
 print(f"Cola vacia?: {cdatos.cola_vacia()}\n")
 

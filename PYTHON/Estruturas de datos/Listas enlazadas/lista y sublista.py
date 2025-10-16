@@ -9,9 +9,10 @@ class lista(object):
 class nodoLista(object):
     """Define la estructura de un nodo para la lista.
     Cada nodo puede contener una sublista anidada."""
-
-    info, sig = None, None
-    sublista = lista()
+    def __init__(self):
+        self.info = None
+        self.sig = None
+        self.sublista = lista()
 
 def lista_vacia(lista):
     """Devuelve true si la lista esta vacia."""

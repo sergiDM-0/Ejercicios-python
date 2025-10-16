@@ -101,7 +101,7 @@ while(aux is not None):
 print(f'\n¿Lista vacia? {mi_lista.lista_vacia()}')
 
 # Buscar un elemento
-buscado = input("\ningrese la palabra a buscar: ")
+buscado = input("\ningrese la palabra a buscar y elimina la palabra buscada: ")
 posicion = mi_lista.buscar(buscado)
 
 if (posicion is not None):
