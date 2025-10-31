@@ -1,3 +1,5 @@
+#clase de lista y nodo lista con sublista
+
 class lista(object):
     """Define la estructura de una lista simplemente enlazada."""
 
@@ -6,7 +8,6 @@ class lista(object):
         self.inicio = None
         self.tamanio = 0
 
-
 class nodoLista(object):
     """Define la estructura de un nodo para la lista."""
     def __init__(self):
@@ -14,16 +15,13 @@ class nodoLista(object):
         self.sig = None
         self.sublista = None
 
-
 def lista_vacia(lista):
     """Devuelve True si la lista está vacía."""
     return lista.inicio is None
 
-
 def tamanio(lista):
     """Devuelve el número de elementos en la lista."""
     return lista.tamanio
-
 
 def barrido(lista):
     """Realiza un barrido de la lista mostrando sus valores."""
@@ -32,7 +30,6 @@ def barrido(lista):
         print(aux.info, end=" -> ")
         aux = aux.sig
     print("None")
-
 
 def criterio(dato, campo=None):
     """Extrae un valor de un objeto para comparaciones."""
@@ -43,7 +40,6 @@ def criterio(dato, campo=None):
         return dato
     else:
         return dic[campo]
-
 
 def insertar(lista, dato, campo=None):
     """Inserta un dato de forma ordenada en la lista."""
@@ -62,14 +58,12 @@ def insertar(lista, dato, campo=None):
         ant.sig = nodo
     lista.tamanio += 1
 
-
 def buscar(lista, buscado, campo=None):
     """Devuelve el nodo completo del elemento buscado."""
     aux = lista.inicio
     while aux is not None and criterio(aux.info, campo) != criterio(buscado, campo):
         aux = aux.sig
     return aux
-
 
 def eliminar(lista, clave, campo=None):
     """Elimina un elemento de la lista y devuelve su valor."""
@@ -93,7 +87,7 @@ def eliminar(lista, clave, campo=None):
 
 # funcion hash de bernstein
 
-
+#funcion que crea el hash de la cadena de caracteres 
 def bernstein(cadena):
     """Función hash de Bernstein (DJB2)."""
     h = 0
@@ -101,23 +95,21 @@ def bernstein(cadena):
         h = h * 33 + ord(caracter)
     return h
 
-
 def crear_tabla(tamanio):
     """Crea una tabla hash vacía."""
     tabla = [None] * tamanio
     return tabla
 
-
 def cantidad_elementos(tabla):
     """Devuelve la cantidad de elementos en la tabla."""
     return sum(tamanio(lista) for lista in tabla if lista is not None)
 
-
+#funcion que calcula la posicion de la tabla 
+#esta usa el modulo para que el resultado sea menor al tamaño de la tabla
 def funcion_hash(dato, tamanio_tabla):
     """Usa la función hash de Bernstein para calcular la posición."""
     h = bernstein(str(dato))
     return h % tamanio_tabla
-
 
 def agregar(tabla, dato):
     """Agrega un elemento a la tabla encadenada."""
@@ -132,7 +124,6 @@ def agregar(tabla, dato):
         print(f"[⚠️ ] Colisión detectada en posición {posicion} con '{dato}'")
 
     insertar(tabla[posicion], dato)
-
 
 def buscar_tabla(tabla, buscado):
     """Busca un elemento dentro de la tabla encadenada."""
@@ -165,67 +156,67 @@ def quitar(tabla, dato):
     
     return elemento_eliminado
 
-
 #implementacion de la tabla hash de bernstein
 
-if __name__ == "__main__":
-    print("=== TABLA HASH CON FUNCIÓN DE BERNSTEIN ===")
-    tamanio_tabla = int(input("Ingrese el tamaño de la tabla hash (>=1): "))
-    tabla = crear_tabla(tamanio_tabla)
+print("=== TABLA HASH CON FUNCIÓN DE BERNSTEIN ===")
+tamanio_tabla = int(input("Ingrese el tamaño de la tabla hash (>=1): "))
+#asignar el tamaño de la tabla
+tabla = crear_tabla(tamanio_tabla)
 
-    print("\nIngrese valores (deje vacío para terminar):")
+print("\nIngrese valores (deje vacío para terminar):")
+#inicializador de los valores de la tabla
+valor = input("Valor: ")
+
+while valor != "":
+    #mientras el valor no sea vacio, agregar el valor a la tabla
+    agregar(tabla, valor)
     valor = input("Valor: ")
 
-    while valor != "":
-        agregar(tabla, valor)
-        valor = input("Valor: ")
-
-    print("\n--- Contenido final de la tabla ---")
-    print("Cantidad de elementos en la tabla: ", cantidad_elementos(tabla))
-    for i, slot in enumerate(tabla):
-        print(f"Posición {i}:", end=" ")
-        if slot is not None:
-            barrido(slot)
-        else:
-            print("Vacía")
-
-    #print("\n--- Búsqueda en la tabla ---")
-    #buscado = input("Ingrese un valor a buscar: ")
-    #buscar_tabla(tabla, buscado)
+print("\n--- Contenido final de la tabla ---")
+#imprime la cantidad de elementos en la tabla
+print("Cantidad de elementos en la tabla: ", cantidad_elementos(tabla))
 
 
-    print("\n--- Búsqueda en la tabla ---")
-    buscado = input("Ingrese un valor a buscar: ")
-
-    # 1. CORRECTO: Usar la función que busca en la TABLA COMPLETA
-    resultado_busqueda = buscar_tabla(tabla, buscado)
-
-    if resultado_busqueda is not None:
-        # Si se encontró, PREGUNTAR si se quiere eliminar
-        respuesta = input("¿Desea quitar el elemento? (s/n): ").lower()
-        
-        if respuesta == "s":
-            # Si la respuesta es sí, INTENTAR quitarlo
-            valor_quitado = quitar(tabla, buscado)
-            if valor_quitado is not None:
-                print(f"✅ Elemento '{valor_quitado}' quitado exitosamente.")
-            else:
-                # Este caso es raro, pero es buena práctica tenerlo
-                print("❌ Hubo un error inesperado al quitar el elemento.")
-        else:
-            # Si la respuesta es no, simplemente cancelar
-            print("Operación cancelada.")
-            
+#imprime la tabla
+#usa la funcion enumeete para imprimir la posicion de la tabla y el slot de la tabla
+for i, slot in enumerate(tabla):
+    print(f"Posición {i}:", end=" ")
+    if slot is not None:
+        barrido(slot)
     else:
-        # Si no se encontró desde el principio, informar y terminar
-        print("❌ Elemento no encontrado, no se puede eliminar.")
+        print("Vacía")
 
-    # Mostrar el estado final de la tabla para verificar
-    print("\n--- Contenido final de la tabla ---")
-    print("Cantidad de elementos en la tabla:", cantidad_elementos(tabla))
-    for i, slot in enumerate(tabla):
-        print(f"Posición {i}:", end=" ")
-        if slot is not None:
-            barrido(slot)
-        else:
-            print("Vacía")
+
+print("\n--- Búsqueda en la tabla ---")
+#obtener el valor a buscar
+buscado = input("Ingrese un valor a buscar: ")
+
+#Usar la función que busca en la TABLA COMPLETA
+resultado_busqueda = buscar_tabla(tabla, buscado)
+
+if resultado_busqueda is not None:
+    # Si se encontró, PREGUNTAR si se quiere eliminar
+    respuesta = input("¿Desea quitar el elemento? (s/n): ").lower()
+    
+    if respuesta == "s":
+        # Si la respuesta es sí, INTENTAR quitarlo
+        valor_quitado = quitar(tabla, buscado)
+        if valor_quitado is not None:
+            print(f"✅ Elemento '{valor_quitado}' eliminado exitosamente.")
+    else:
+        # Si la respuesta es no, no lo elimina
+        print("No se elimino el valor buscado.")
+        
+else:
+    # Si no se encontró el valor imprimir 
+    print("❌ Elemento no encontrado, no se puede eliminar.")
+
+# Imprimir el estado final de la tabla para mostrar cambios si hay 
+print("\n--- Contenido final de la tabla ---")
+print("Cantidad de elementos en la tabla:", cantidad_elementos(tabla))
+for i, slot in enumerate(tabla):
+    print(f"Posición {i}:", end=" ")
+    if slot is not None:
+        barrido(slot)
+    else:
+        print("Vacía")
