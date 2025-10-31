@@ -91,9 +91,8 @@ def eliminar(lista, clave, campo=None):
     return dato
 
 
-# ---------------------------
-# FUNCIONES HASH
-# ---------------------------
+# funcion hash de bernstein
+
 
 def bernstein(cadena):
     """Función hash de Bernstein (DJB2)."""
@@ -130,7 +129,7 @@ def agregar(tabla, dato):
         tabla[posicion] = lista()
         print(f"[+] '{dato}' insertado en posición {posicion}")
     else:
-        print(f"[⚠️] Colisión detectada en posición {posicion} con '{dato}'")
+        print(f"[⚠️ ] Colisión detectada en posición {posicion} con '{dato}'")
 
     insertar(tabla[posicion], dato)
 
@@ -151,11 +150,27 @@ def buscar_tabla(tabla, buscado):
         print(f"❌ No hay lista en la posición {posicion}")
     return None
 
+def quitar(tabla, dato):
+    """Quita un elemento de la tabla encadenada si existe."""
+    posicion = funcion_hash(dato, len(tabla))
+    elemento_eliminado = None
+
+    if tabla[posicion] is not None:
+        # Llama a la función 'eliminar' de la lista enlazada
+        elemento_eliminado = eliminar(tabla[posicion], dato)
+        
+        # Si la lista en esa posición queda vacía, la eliminamos para limpiar
+        if lista_vacia(tabla[posicion]):
+            tabla[posicion] = None
+    
+    return elemento_eliminado
+
 
 #implementacion de la tabla hash de bernstein
+
 if __name__ == "__main__":
     print("=== TABLA HASH CON FUNCIÓN DE BERNSTEIN ===")
-    tamanio_tabla = int(input("Ingrese el tamaño de la tabla hash: "))
+    tamanio_tabla = int(input("Ingrese el tamaño de la tabla hash (>=1): "))
     tabla = crear_tabla(tamanio_tabla)
 
     print("\nIngrese valores (deje vacío para terminar):")
@@ -166,6 +181,7 @@ if __name__ == "__main__":
         valor = input("Valor: ")
 
     print("\n--- Contenido final de la tabla ---")
+    print("Cantidad de elementos en la tabla: ", cantidad_elementos(tabla))
     for i, slot in enumerate(tabla):
         print(f"Posición {i}:", end=" ")
         if slot is not None:
@@ -173,6 +189,43 @@ if __name__ == "__main__":
         else:
             print("Vacía")
 
+    #print("\n--- Búsqueda en la tabla ---")
+    #buscado = input("Ingrese un valor a buscar: ")
+    #buscar_tabla(tabla, buscado)
+
+
     print("\n--- Búsqueda en la tabla ---")
     buscado = input("Ingrese un valor a buscar: ")
-    buscar_tabla(tabla, buscado)
+
+    # 1. CORRECTO: Usar la función que busca en la TABLA COMPLETA
+    resultado_busqueda = buscar_tabla(tabla, buscado)
+
+    if resultado_busqueda is not None:
+        # Si se encontró, PREGUNTAR si se quiere eliminar
+        respuesta = input("¿Desea quitar el elemento? (s/n): ").lower()
+        
+        if respuesta == "s":
+            # Si la respuesta es sí, INTENTAR quitarlo
+            valor_quitado = quitar(tabla, buscado)
+            if valor_quitado is not None:
+                print(f"✅ Elemento '{valor_quitado}' quitado exitosamente.")
+            else:
+                # Este caso es raro, pero es buena práctica tenerlo
+                print("❌ Hubo un error inesperado al quitar el elemento.")
+        else:
+            # Si la respuesta es no, simplemente cancelar
+            print("Operación cancelada.")
+            
+    else:
+        # Si no se encontró desde el principio, informar y terminar
+        print("❌ Elemento no encontrado, no se puede eliminar.")
+
+    # Mostrar el estado final de la tabla para verificar
+    print("\n--- Contenido final de la tabla ---")
+    print("Cantidad de elementos en la tabla:", cantidad_elementos(tabla))
+    for i, slot in enumerate(tabla):
+        print(f"Posición {i}:", end=" ")
+        if slot is not None:
+            barrido(slot)
+        else:
+            print("Vacía")

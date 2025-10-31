@@ -87,6 +87,8 @@ def eliminar(lista, clave, campo=None):
 
   # codigo del libro funcion hash
 
+# funcion hash de bernstein
+
 def bernstein(cadena):
     """Función hash de Bernstein para cadenas."""
     h = 0
@@ -99,11 +101,6 @@ def crear_tabla(tamanio):
     """Crea una tabla hash vacía."""
     tabla = [None] * tamanio
     return tabla
-
-
-def cantidad_elementos(tabla):
-    """Devuelve la cantidad de elementos en la tabla."""
-    return len(tabla) - tabla.count(None)
 
 
 def cantidad_elementos(tabla):
@@ -181,7 +178,10 @@ def quitar(tabla, dato):
             # para determinar si está en otra posición y quitarlo
     return dato
 
-"""
+
+
+#implementacion de la tabla hash de bernstein
+
 tabla = crear_tabla(3)
 
 nombre = input('ingrese nombre ')
@@ -193,29 +193,7 @@ while (nombre != ''):
 buscado = input('ingrese el nombre a buscar ')
 posicion = buscar(tabla, buscado)
 if (posicion is not None):
-    print('elemento encontrado', posicion.info.info)
+    print('elemento encontrado', posicion)
 else:
     print('no se encontro el elemento buscado')
 
-"""
-if __name__ == "__main__":
-    tabla = crear_tabla(5)  # Pequeña para provocar colisiones
-
-    nombres = ["Ana", "Luis", "Juan", "María", "Leo", "Lucía", "Luz", "Anaïs", "Lucho", "Luisa"]
-
-    print("\n--- Inserción en la tabla hash (función de Bernstein) ---\n")
-    for nombre in nombres:
-        agregar(tabla, nombre)
-
-    print("\n--- Contenido final de la tabla ---\n")
-    for i, slot in enumerate(tabla):
-        print(f"Posición {i}:", end=" ")
-        if slot is not None:
-            barrido(slot)
-        else:
-            print("Vacía")
-
-    # Buscar elemento
-    print("\n--- Búsqueda en la tabla ---")
-    valor = input("Ingrese un nombre para buscar: ")
-    buscar(tabla, valor)
