@@ -1,3 +1,7 @@
+import hashlib
+
+#clase de lista y nodo lista con sublista
+
 class lista(object):
     """Define la estructura de una lista simplemente enlazada."""
 
@@ -6,7 +10,6 @@ class lista(object):
         self.inicio = None
         self.tamanio = 0
 
-
 class nodoLista(object):
     """Define la estructura de un nodo para la lista."""
     def __init__(self):
@@ -14,16 +17,13 @@ class nodoLista(object):
         self.sig = None
         self.sublista = None
 
-
 def lista_vacia(lista):
     """Devuelve True si la lista está vacía."""
     return lista.inicio is None
 
-
 def tamanio(lista):
     """Devuelve el número de elementos en la lista."""
     return lista.tamanio
-
 
 def barrido(lista):
     """Realiza un barrido de la lista mostrando sus valores."""
@@ -32,7 +32,6 @@ def barrido(lista):
         print(aux.info, end=" -> ")
         aux = aux.sig
     print("None")
-
 
 def criterio(dato, campo=None):
     """Extrae un valor de un objeto para comparaciones."""
@@ -43,7 +42,6 @@ def criterio(dato, campo=None):
         return dato
     else:
         return dic[campo]
-
 
 def insertar(lista, dato, campo=None):
     """Inserta un dato de forma ordenada en la lista."""
@@ -62,14 +60,12 @@ def insertar(lista, dato, campo=None):
         ant.sig = nodo
     lista.tamanio += 1
 
-
 def buscar(lista, buscado, campo=None):
     """Devuelve el nodo completo del elemento buscado."""
     aux = lista.inicio
     while aux is not None and criterio(aux.info, campo) != criterio(buscado, campo):
         aux = aux.sig
     return aux
-
 
 def eliminar(lista, clave, campo=None):
     """Elimina un elemento de la lista y devuelve su valor."""
@@ -91,50 +87,35 @@ def eliminar(lista, clave, campo=None):
     return dato
 
 
-# funcion hash 
+# funcion hash de sha-256
 
-def fnv1a_32(key: str) -> int:
-    """
-    Calcula el hash FNV-1a de 32 bits para una clave.
-    Ideal para dispersión en tablas hash.
-    """
-    # Constantes mágicas para la versión de 32 bits
-    FNV_PRIME_32 = 0x01000193
-    FNV_OFFSET_BASIS_32 = 0x811c9dc5
-    
-    hash_val = FNV_OFFSET_BASIS_32
-    
-    # Procesa cada byte de la clave codificada
-    for byte in key.encode('utf-8'):
-        hash_val ^= byte
-        hash_val *= FNV_PRIME_32
-        # Mantiene el valor dentro de los 32 bits
-        hash_val &= 0xffffffff 
-        
-    return hash_val
-
-
+#funcion que crea el hash de la cadena de caracteres 
+def Hash_sha1(cadena):
+    """Calcula el hash SHA-1 de una cadena y lo devuelve como entero."""
+    hash_obj = hashlib.sha1(cadena.encode('utf-8'))
+    hex_digest = hash_obj.hexdigest()
+    # Convertimos el hash hexadecimal a un entero para poder usar %
+    return int(hex_digest, 16)
 
 def crear_tabla(tamanio):
     """Crea una tabla hash vacía."""
     tabla = [None] * tamanio
     return tabla
 
-
 def cantidad_elementos(tabla):
     """Devuelve la cantidad de elementos en la tabla."""
     return sum(tamanio(lista) for lista in tabla if lista is not None)
 
-
+#funcion que calcula la posicion de la tabla 
+#esta usa el modulo para que el resultado sea menor al tamaño de la tabla
 def funcion_hash(dato, tamanio_tabla):
     """Usa la función hash de Bernstein para calcular la posición."""
-    h = fnv1a_32(str(dato))
+    h = Hash_sha1(str(dato))
     return h % tamanio_tabla
-
 
 def agregar(tabla, dato):
     """Agrega un elemento a la tabla encadenada."""
-    h = fnv1a_32(str(dato))
+    h = Hash_sha1(str(dato))
     posicion = funcion_hash(dato, len(tabla))
     print(f"\nElemento: '{dato}' | Hash completo: {h} | Posición en tabla: {posicion}")
 
@@ -142,14 +123,13 @@ def agregar(tabla, dato):
         tabla[posicion] = lista()
         print(f"[+] '{dato}' insertado en posición {posicion}")
     else:
-        print(f"[⚠️] Colisión detectada en posición {posicion} con '{dato}'")
+        print(f"[⚠️ ] Colisión detectada en posición {posicion} con '{dato}'")
 
     insertar(tabla[posicion], dato)
 
-
 def buscar_tabla(tabla, buscado):
     """Busca un elemento dentro de la tabla encadenada."""
-    h = fnv1a_32(str(buscado))
+    h = Hash_sha1(str(buscado))
     posicion = funcion_hash(buscado, len(tabla))
     print(f"\nBuscando '{buscado}' | Hash completo: {h} | Posición esperada: {posicion}")
     if tabla[posicion] is not None:
@@ -163,32 +143,81 @@ def buscar_tabla(tabla, buscado):
         print(f"❌ No hay lista en la posición {posicion}")
     return None
 
+def quitar(tabla, dato):
+    """Quita un elemento de la tabla encadenada si existe."""
+    posicion = funcion_hash(dato, len(tabla))
+    elemento_eliminado = None
 
+    if tabla[posicion] is not None:
+        # Llama a la función 'eliminar' de la lista enlazada
+        elemento_eliminado = eliminar(tabla[posicion], dato)
+        
+        # Si la lista en esa posición queda vacía, la eliminamos para limpiar
+        if lista_vacia(tabla[posicion]):
+            tabla[posicion] = None
+    
+    return elemento_eliminado
 
+# --- IMPLEMENTACIÓN DE LA TABLA HASH (BLOQUE PRINCIPAL) ---
 
-#implementacion de la tabla hash de fnv1a-1a
-# se hace uso implicitamente de la funcion de fnv1a-1a en las funciones agregar y buscar_tabla no se llama directamente la funcion de fnv1a-1a
+print("=== TABLA HASH CON FUNCIÓN SHA-1 ===")
 
-if __name__ == "__main__":
-    print("=== TABLA HASH CON FUNCIÓN DE fnv1a_32 ===")
-    tamanio_tabla = int(input("Ingrese el tamaño de la tabla hash: "))
-    tabla = crear_tabla(tamanio_tabla)
+tamanio_tabla = int(input("Ingrese el tamaño de la tabla hash (>=1): "))
+#asignar el tamaño de la tabla
+tabla = crear_tabla(tamanio_tabla)
 
-    print("\nIngrese valores (deje vacío para terminar):")
+print("\nIngrese valores (deje vacío para terminar):")
+#inicializador de los valores de la tabla
+valor = input("Valor: ")
+
+while valor != "":
+    #mientras el valor no sea vacio, agregar el valor a la tabla
+    agregar(tabla, valor)
     valor = input("Valor: ")
 
-    while valor != "":
-        agregar(tabla, valor)
-        valor = input("Valor: ")
+print("\n--- Contenido final de la tabla ---")
+#imprime la cantidad de elementos en la tabla
+print("Cantidad de elementos en la tabla: ", cantidad_elementos(tabla))
 
-    print("\n--- Contenido final de la tabla ---")
-    for i, slot in enumerate(tabla):
-        print(f"Posición {i}:", end=" ")
-        if slot is not None:
-            barrido(slot)
-        else:
-            print("Vacía")
+#imprime la tabla
+#usa la funcion enumerate para imprimir la posicion de la tabla y el slot de la tabla
+for i, slot in enumerate(tabla):
+    print(f"Posición {i}:", end=" ")
+    if slot is not None:
+        barrido(slot)
+    else:
+        print("Vacía")
 
-    print("\n--- Búsqueda en la tabla ---")
-    buscado = input("Ingrese un valor a buscar: ")
-    buscar_tabla(tabla, buscado)
+print("\n--- Búsqueda en la tabla ---")
+#obtener el valor a buscar
+buscado = input("Ingrese un valor a buscar: ")
+
+#Usar la función que busca en la TABLA COMPLETA
+resultado_busqueda = buscar_tabla(tabla, buscado)
+
+if resultado_busqueda is not None:
+    # Si se encontró, PREGUNTAR si se quiere eliminar
+    respuesta = input("¿Desea quitar el elemento? (s/n): ").lower()
+    
+    if respuesta == "s":
+        # Si la respuesta es sí, INTENTAR quitarlo
+        valor_quitado = quitar(tabla, buscado)
+        if valor_quitado is not None:
+            print(f"✅ Elemento '{valor_quitado}' eliminado exitosamente.")
+    else:
+        # Si la respuesta es no, no lo elimina
+        print("No se elimino el valor buscado.")
+        
+else:
+    # Si no se encontró el valor imprimir 
+    print("❌ Elemento no encontrado, no se puede eliminar.")
+
+# Imprimir el estado final de la tabla para mostrar cambios si hay 
+print("\n--- Contenido final de la tabla ---")
+print("Cantidad de elementos en la tabla:", cantidad_elementos(tabla))
+for i, slot in enumerate(tabla):
+    print(f"Posición {i}:", end=" ")
+    if slot is not None:
+        barrido(slot)
+    else:
+        print("Vacía")
