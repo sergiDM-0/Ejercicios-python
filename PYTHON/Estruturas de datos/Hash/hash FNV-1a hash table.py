@@ -1,4 +1,3 @@
-import hashlib
 
 #clase de lista y nodo lista con sublista
 
@@ -87,16 +86,6 @@ def eliminar(lista, clave, campo=None):
     return dato
 
 
-# funcion hash de sha-256
-
-#funcion que crea el hash de la cadena de caracteres 
-def Hash_sha256(cadena):
-    """Calcula el hash SHA-256 de una cadena y lo devuelve como entero."""
-    hash_obj = hashlib.sha256(cadena.encode('utf-8'))
-    hex_digest = hash_obj.hexdigest()
-    # Convertimos el hash hexadecimal a un entero para poder usar %
-    return int(hex_digest, 16)
-
 def crear_tabla(tamanio):
     """Crea una tabla hash vacía."""
     tabla = [None] * tamanio
@@ -106,17 +95,10 @@ def cantidad_elementos(tabla):
     """Devuelve la cantidad de elementos en la tabla."""
     return sum(tamanio(lista) for lista in tabla if lista is not None)
 
-#funcion que calcula la posicion de la tabla 
-#esta usa el modulo para que el resultado sea menor al tamaño de la tabla
-def funcion_hash(dato, tamanio_tabla):
-    """Usa la función hash de Bernstein para calcular la posición."""
-    h = Hash_sha256(str(dato))
-    return h % tamanio_tabla
-
 def agregar(tabla, dato):
     """Agrega un elemento a la tabla encadenada."""
-    h = Hash_sha256(str(dato))
-    posicion = funcion_hash(dato, len(tabla))
+    h = Hash_fnv1a(str(dato))
+    posicion = Hash_fnv1a(dato, len(tabla))
     print(f"\nElemento: '{dato}' | Hash completo: {h} | Posición en tabla: {posicion}")
 
     if tabla[posicion] is None:
@@ -129,8 +111,8 @@ def agregar(tabla, dato):
 
 def buscar_tabla(tabla, buscado):
     """Busca un elemento dentro de la tabla encadenada."""
-    h = Hash_sha256(str(buscado))
-    posicion = funcion_hash(buscado, len(tabla))
+    h = Hash_fnv1a(str(buscado))
+    posicion = Hash_fnv1a(buscado, len(tabla))
     print(f"\nBuscando '{buscado}' | Hash completo: {h} | Posición esperada: {posicion}")
     if tabla[posicion] is not None:
         nodo = buscar(tabla[posicion], buscado)
@@ -145,18 +127,43 @@ def buscar_tabla(tabla, buscado):
 
 def quitar(tabla, dato):
     """Quita un elemento de la tabla encadenada si existe."""
-    posicion = funcion_hash(dato, len(tabla))
+    posicion = Hash_fnv1a(dato, len(tabla))
     elemento_eliminado = None
 
     if tabla[posicion] is not None:
         # Llama a la función 'eliminar' de la lista enlazada
         elemento_eliminado = eliminar(tabla[posicion], dato)
-        
+
         # Si la lista en esa posición queda vacía, la eliminamos para limpiar
         if lista_vacia(tabla[posicion]):
             tabla[posicion] = None
-    
+
     return elemento_eliminado
+
+# --- INICIO: CÓDIGO FNV-1a (AÑADIDO) ---
+# Constantes para FNV-1a 32-bit
+FNV_PRIME_32 = 0x01000193
+FNV_OFFSET_BASIS_32 = 0x811c9dc5
+# Máscara para mantener el resultado en 32 bits (equivale a 2**32 - 1)
+MASK_32 = 0xFFFFFFFF 
+
+def fnv1a_32(data: bytes) -> int:
+    """Calcula el hash FNV-1a de 32 bits de un objeto bytes."""
+    hash_val = FNV_OFFSET_BASIS_32
+    for byte in data:
+        hash_val ^= byte
+        hash_val = (hash_val * FNV_PRIME_32) & MASK_32 
+    return hash_val
+
+def Hash_fnv1a(cadena):
+    """
+    Calcula el hash FNV-1a de 32 bits de una CADENA (str) 
+    y lo devuelve como entero.
+    """
+    # Convertir el string a bytes (usando codificación UTF-8)
+    datos_en_bytes = cadena.encode('utf-8')
+    # Devolver el hash como un entero
+    return fnv1a_32(datos_en_bytes)
 
 # --- IMPLEMENTACIÓN DE LA TABLA HASH (BLOQUE PRINCIPAL) ---
 

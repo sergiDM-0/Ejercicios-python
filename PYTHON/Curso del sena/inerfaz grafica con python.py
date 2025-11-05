@@ -23,7 +23,7 @@ class ArregloUnidimensionalApp:
         self.nombres = [None] * self.tamano
         self.papelera = []  # Guarda tuplas (nombre, posición)
 
-        # --- Interfaz gráfica ---
+        # --- Interfaz gr/áfica ---
         tk.Label(root, text="MENÚ PRINCIPAL", font=("Arial", 16, "bold")).pack(pady=10)
 
         frame_botones = tk.Frame(root)
