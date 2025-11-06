@@ -145,42 +145,101 @@ def quitar(tabla, dato):
 
 def funcion_hash(dato, tamanio_tabla):
     """
-    Usa la función hash de MULTIPLICACIÓN (Knuth) para calcular la posición.
+    Usa la función hash de CUADRADO MEDIO (Mid-Square) 
+    combinado con la división.
     """
     
-    # 1. Obtener la clave numérica 'k' de 32 bits
-    k = Hash_fnv1a_32(str(dato))
+    # 1. Obtener la clave numérica 'k' de 32 bits (usando MurmurHash3)
+    #    (Tu código ya convierte 'dato' a str, lo cual es perfecto)
+    k = hash_MurmurHash3_32(str(dato))
     
-    # 2. Aplicar la fórmula de multiplicación de Knuth
-    A = 0.6180339887498949 # Constante A
+    # 2. Elevar 'k' al cuadrado.
+    #    En Python, k (32 bits) * k (32 bits) = k_squared (64 bits)
+    k_squared = k * k
     
-    # (k * A) % 1  (Esto obtiene la parte fraccionaria)
-    # k (int 32-bit) * A (float) -> Esto funciona sin pérdida de precisión
-    fraccion = (k * A) % 1
+    # 3. Extraer los 32 bits intermedios (de 64).
+    #    Esto se hace desplazando 16 bits a la derecha y 
+    #    quedándonos con los 32 bits siguientes.
+    #    (Se desplaza (64-32)/2 = 16)
+    k_middle = (k_squared >> 16) & 0xFFFFFFFF # 0xFFFFFFFF es la máscara para 32 bits
     
-    # Multiplicamos por el tamaño de la tabla y tomamos la parte entera
-    posicion = int(tamanio_tabla * fraccion)
+    # 4. Aplicar el método de la división (módulo) al NUEVO hash.
+    #    Como discutimos, este paso es inevitable para un tamaño 'm' 
+    #    arbitrario, pero ahora lo aplicamos a un número
+    #    completamente diferente ('k_middle' en lugar de 'k').
+    posicion = k_middle % tamanio_tabla
     
     return posicion
 
-def Hash_fnv1a_32(cadena):
+def  hash_MurmurHash3_32(cadena, seed=0):
     """
-    Calcula el hash FNV-1a de 32 bits de una CADENA (str) 
+    Calcula el hash MurmurHash3 de 32 bits de una CADENA (str)
     y lo devuelve como entero.
     """
-    # Constantes mágicas para FNV-1a de 32 bits
-    FNV_PRIME_32 = 16777619
-    FNV_OFFSET_BASIS_32 = 2166136261
+    # Convertir la cadena a bytes (UTF-8)
+    try:
+        data = cadena.encode('utf-8')
+    except Exception:
+        # Fallback por si acaso (aunque str.encode no suele fallar)
+        data = bytes(cadena, 'utf-8')
 
-    # Convertir el string a bytes (usando codificación UTF-8)
-    datos_en_bytes = cadena.encode('utf-8')
-    
-    h = FNV_OFFSET_BASIS_32
-    # Bucle sobre cada byte
-    for byte in datos_en_bytes:
-        h = h ^ byte # XOR
-        h = (h * FNV_PRIME_32) & 0xFFFFFFFF # Multiplicar y aplicar máscara 32 bits
-    
+    c1 = 0xcc9e2d51
+    c2 = 0x1b873593
+    r1 = 15
+    r2 = 13
+    m = 5
+    n = 0xe6546b64
+
+    # Longitud y número de bloques
+    length = len(data)
+    nblocks = length // 4
+    h = seed # Iniciar hash con la semilla
+
+    # --- Procesar bloques de 4 bytes ---
+    for i in range(0, nblocks):
+        idx = i * 4
+        # Leer 4 bytes (little-endian)
+        k = (data[idx] & 0xFF) | \
+            ((data[idx + 1] & 0xFF) << 8) | \
+            ((data[idx + 2] & 0xFF) << 16) | \
+            ((data[idx + 3] & 0xFF) << 24)
+
+        # --- Mezcla del bloque ---
+        # (Se usa & 0xFFFFFFFF para simular aritmética de 32 bits sin signo)
+        k = (k * c1) & 0xFFFFFFFF
+        k = ((k << r1) | (k >> (32 - r1))) & 0xFFFFFFFF # ROL32
+        k = (k * c2) & 0xFFFFFFFF
+
+        h = h ^ k
+        h = ((h << r2) | (h >> (32 - r2))) & 0xFFFFFFFF # ROL32
+        h = (h * m + n) & 0xFFFFFFFF
+
+    # --- Procesar la cola (bytes restantes) ---
+    tail_index = nblocks * 4
+    k = 0
+    tail_size = length & 3 # length % 4
+
+    if tail_size == 3:
+        k ^= (data[tail_index + 2] & 0xFF) << 16
+    if tail_size >= 2: # Cae aquí si es 2 o 3
+        k ^= (data[tail_index + 1] & 0xFF) << 8
+    if tail_size >= 1: # Cae aquí si es 1, 2 o 3
+        k ^= (data[tail_index] & 0xFF)
+        
+        # --- Mezcla de la cola ---
+        k = (k * c1) & 0xFFFFFFFF
+        k = ((k << r1) | (k >> (32 - r1))) & 0xFFFFFFFF # ROL32
+        k = (k * c2) & 0xFFFFFFFF
+        h = h ^ k
+
+    # --- Etapa final (Avalancha/Fmix) ---
+    h ^= length
+    h = (h ^ (h >> 16)) & 0xFFFFFFFF
+    h = (h * 0x85ebca6b) & 0xFFFFFFFF
+    h = (h ^ (h >> 13)) & 0xFFFFFFFF
+    h = (h * 0xc2b2ae35) & 0xFFFFFFFF
+    h = (h ^ (h >> 16)) & 0xFFFFFFFF
+
     return h
 
 
