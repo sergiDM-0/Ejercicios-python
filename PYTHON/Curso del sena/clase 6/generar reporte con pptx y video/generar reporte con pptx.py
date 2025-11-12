@@ -27,7 +27,6 @@ OUTPUT_DIR.mkdir(exist_ok=True)  # Crear carpeta de resultados si no existe
 LOGO_PATH = BASE / "logo_ECCI.jpg"
 VIDEO_PATH = BASE / "2025-11-03 20-23-33.mp4"
 
-
 def graficos(resultados):
     # Gráfico: promedios por programa
     df_programa = resultados['por_programa']
