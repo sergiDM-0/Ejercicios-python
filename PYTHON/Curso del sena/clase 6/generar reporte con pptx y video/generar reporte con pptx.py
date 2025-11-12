@@ -13,6 +13,14 @@ from pptx.util import Inches, Pt
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN
 
+try:
+    import cv2
+    CV2_AVAILABLE = True
+    CV2_ERROR = None
+except (ImportError, OSError, Exception) as e:
+    CV2_AVAILABLE = False
+    CV2_ERROR = str(e).lower()
+
 BASE = Path(__file__).resolve().parent
 OUTPUT_DIR = BASE / "resultados"
 OUTPUT_DIR.mkdir(exist_ok=True)  # Crear carpeta de resultados si no existe
@@ -70,6 +78,54 @@ def tabla_pdf(pdf, df, x, y, max_width=520):
     table.drawOn(pdf, x, y - h)
 
 
+def extraer_frame_video(video_path, output_path, frame_num=0):
+    """Extrae un frame del video y lo guarda como imagen"""
+    if not CV2_AVAILABLE:
+        # Mostrar mensaje solo una vez
+        if CV2_ERROR:
+            error_msg = CV2_ERROR
+            if "libavif" in error_msg or "shared object" in error_msg or "cannot open shared object" in error_msg:
+                print("⚠️ opencv-python está instalado pero faltan dependencias del sistema.")
+                print("   Para extraer frames del video, instala las dependencias:")
+                print("   sudo apt-get update && sudo apt-get install -y libavcodec-dev libavformat-dev libavutil-dev libswscale-dev")
+            else:
+                print("⚠️ opencv-python no está disponible. Para extraer frames del video, instala: pip install opencv-python")
+        return False
+    
+    try:
+        cap = cv2.VideoCapture(str(video_path))
+        if not cap.isOpened():
+            print(f"⚠️ No se pudo abrir el video: {video_path}")
+            return False
+        
+        # Ir al frame especificado
+        cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)
+        ret, frame = cap.read()
+        
+        if ret:
+            cv2.imwrite(str(output_path), frame)
+            cap.release()
+            return True
+        else:
+            cap.release()
+            print(f"⚠️ No se pudo leer el frame {frame_num} del video")
+            return False
+    except NameError:
+        # cv2 no está definido
+        return False
+    except OSError as e:
+        error_str = str(e).lower()
+        if "libavif" in error_str or "shared object" in error_str:
+            print("⚠️ Error: opencv-python está instalado pero faltan dependencias del sistema.")
+            print("   Ejecuta: sudo apt-get update && sudo apt-get install -y libavcodec-dev libavformat-dev libavutil-dev libswscale-dev")
+        else:
+            print(f"⚠️ Error del sistema al usar opencv: {e}")
+        return False
+    except Exception as e:
+        print(f"⚠️ Error al extraer frame del video: {e}")
+        return False
+
+
 def generar_pdf(resultados):
     graficos(resultados)
 
@@ -77,12 +133,36 @@ def generar_pdf(resultados):
     pdf = canvas.Canvas(str(pdf_path), pagesize=A4)
     width, height = A4
 
-    # ✅ PORTADA
+    # ✅ PORTADA con Logo y Video
+    # Logo en esquina superior izquierda
+    if LOGO_PATH.exists():
+        logo_width = 100
+        logo_height = 75
+        pdf.drawImage(str(LOGO_PATH), 50, height - 100, width=logo_width, height=logo_height, preserveAspectRatio=True)
+        print(f"✅ Logo agregado al PDF: {LOGO_PATH}")
+    
+    # Extraer frame del video y agregarlo en el centro
+    video_frame_path = OUTPUT_DIR / "video_frame.png"
+    if VIDEO_PATH.exists():
+        if extraer_frame_video(VIDEO_PATH, video_frame_path):
+            # Calcular posición centrada para el video
+            video_width = 400
+            video_height = 300
+            video_x = (width - video_width) / 2
+            video_y = (height - video_height) / 2 - 50
+            pdf.drawImage(str(video_frame_path), video_x, video_y, width=video_width, height=video_height, preserveAspectRatio=True)
+            print(f"✅ Frame del video agregado al PDF")
+        else:
+            # Si no se puede extraer el frame, mostrar un mensaje
+            pdf.setFont("Helvetica", 12)
+            pdf.drawString(200, height / 2, f"Video: {VIDEO_PATH.name}")
+    
+    # Título debajo del video
     pdf.setFont("Helvetica-Bold", 20)
-    pdf.drawString(80, height - 100, "Informe Ejecutivo de Analítica Institucional")
+    pdf.drawString(80, height - 500, "Informe Ejecutivo de Analítica Institucional")
     pdf.setFont("Helvetica", 12)
-    pdf.drawString(80, height - 130, "Rendimiento Académico - Universidad ECCI")
-    pdf.drawString(80, height - 150, "Generado automáticamente con Python")
+    pdf.drawString(80, height - 530, "Rendimiento Académico - Universidad ECCI")
+    pdf.drawString(80, height - 550, "Generado automáticamente con Python")
     pdf.showPage()
 
     # ✅ GRÁFICO 1
@@ -243,7 +323,11 @@ def generar_pptx(resultados):
     for row_idx, (_, row) in enumerate(df_prog.iterrows(), start=1):
         for col_idx, value in enumerate(row):
             cell = table.cell(row_idx, col_idx)
-            cell.text = str(round(value, 2))
+            # Verificar si el valor es numérico antes de redondear
+            if isinstance(value, (int, float)) and not pd.isna(value):
+                cell.text = str(round(value, 2))
+            else:
+                cell.text = str(value)
             cell.text_frame.paragraphs[0].font.size = Pt(9)
             cell.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
 
@@ -276,7 +360,11 @@ def generar_pptx(resultados):
     for row_idx, (_, row) in enumerate(df_asig.iterrows(), start=1):
         for col_idx, value in enumerate(row):
             cell = table.cell(row_idx, col_idx)
-            cell.text = str(round(value, 2))
+            # Verificar si el valor es numérico antes de redondear
+            if isinstance(value, (int, float)) and not pd.isna(value):
+                cell.text = str(round(value, 2))
+            else:
+                cell.text = str(value)
             cell.text_frame.paragraphs[0].font.size = Pt(9)
             cell.text_frame.paragraphs[0].alignment = PP_ALIGN.CENTER
 
