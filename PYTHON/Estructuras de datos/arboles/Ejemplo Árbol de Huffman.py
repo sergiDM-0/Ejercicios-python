@@ -16,9 +16,22 @@ class nodoHuffman(object):
         self.der = None
 
     def __lt__(self, other):
+        """Permite a heapq comparar nodos por frecuencia."""
         return self.frecuencia < other.frecuencia
+
     def __eq__(self, other):
+        """Permite a heapq comparar nodos por frecuencia."""
         return self.frecuencia == other.frecuencia
+    
+    # --- INICIO DE LA CORRECCIÓN ---
+    def __hash__(self):
+        """
+        Hace que el nodo sea 'hasheable' para el diccionario de netgraph.
+        Al definir __eq__, Python elimina __hash__ por defecto. 
+        Lo restauramos usando el id único del objeto.
+        """
+        return id(self)
+    # --- FIN DE LA CORRECCIÓN ---
     
     def __str__(self):
         # Muestra 'char: freq' si es hoja, o solo 'freq' si es nodo interno

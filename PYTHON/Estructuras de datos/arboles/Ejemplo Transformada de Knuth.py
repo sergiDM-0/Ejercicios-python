@@ -10,7 +10,7 @@ from Utilidad_de_Visualizacion import plot_tree # Importamos la función de plot
 
 def crear_arbol_dioses_knuth():
     """
-    Crea manualmente el árbol binario de Dioses Griegos
+    Crea manually el árbol binario de Dioses Griegos
     basado en la "transformada de Knuth" (pág. 156, Fig. 32).
     
     - .izq = primer hijo
@@ -74,9 +74,14 @@ def main_knuth():
     raiz_dioses = crear_arbol_dioses_knuth()
     
     print("Árbol N-ario (Fig. 31) transformado a Árbol Binario (Fig. 32).")
-    print("El gráfico muestra la estructura binaria (hijo-izquierdo, hermano-derecho).")
+    print("El gráfico mostrará la estructura binaria (hijo-izquierdo, hermano-derecho).")
     
-    plot_tree(raiz_dioses, "Árbol de Dioses Griegos (Transformada de Knuth - Fig. 32)")
+    # --- INICIO DE LA CORRECCIÓN ---
+    # Especificamos que use el nuevo layout 'knuth'
+    plot_tree(raiz_dioses, 
+              "Árbol de Dioses Griegos (Transformada de Knuth - Fig. 32)", 
+              layout='knuth')
+    # --- FIN DE LA CORRECCIÓN ---
 
 if __name__ == "__main__":
     # Para ejecutar este archivo:
