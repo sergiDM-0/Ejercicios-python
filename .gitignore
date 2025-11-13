@@ -1,4 +1,7 @@
-Evita que se suba mi_entorno
+Evita que se suba mi_entorno de virtualbox
 
 mi_entorno/
 
+entorno de desarrollo de la maquina principal 
+
+.venv/
