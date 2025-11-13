@@ -5,7 +5,7 @@ class Cola(object):
     def __init__(self):
         """Crea una cola vacía."""
         self.frente, self.final = None, None
-        self.tamanio = 0
+        self.tamanio = 0 
 
 class nodo_cola(object):
 
